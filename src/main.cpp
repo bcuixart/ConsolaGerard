@@ -31,6 +31,8 @@ unsigned long oldMillis;
 unsigned char audioCheckTimer = 0;
 #define AUDIO_CHECK_TIME 200
 
+unsigned long joystickResetHeldTime = 0;
+
 void welcome(void);
 
 void setup() 
@@ -44,6 +46,8 @@ void setup()
   initSceen();
 
   selectedGame = 0;
+
+  joystickResetHeldTime = 0;
 
   welcome();
 }
@@ -68,9 +72,18 @@ void loop()
   unsigned int joystickY = analogRead(PIN_JOYSTICK_Y);
   bool joystickPressed = digitalRead(PIN_JOYSTICK_B) == LOW;
 
+  joystickResetHeldTime = joystickPressed ? joystickResetHeldTime + (millis() - oldMillis) : 0;
+  if (joystickResetHeldTime >= 5000) 
+  {
+    joystickResetHeldTime = 0;
+    state = MENU;
+    StartMenu(games, NUM_GAMES);
+  }
+
   unsigned long elapsed = millis() - oldMillis;
 
-  switch(state) {
+  switch(state) 
+  {
     case MENU:{
       if (joystickPressed) 
       {

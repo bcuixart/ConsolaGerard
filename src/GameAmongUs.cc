@@ -44,7 +44,7 @@ void GameAmongUs::Update_Start(unsigned int joystickX, unsigned int joystickY, b
 
 void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
-  playAudio(AUDIO_FOLDER_GAME_AMONGUS, AUDIO_GAME_AMONGUS_ROUNDSTART);
+  playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_ROUNDSTART);
 
   tft.fillRect(5 + correctCup * 50, 37, 49, 36, COLOR_WALL);
   tft.fillRect(5 + correctCup * 50, 73, 49, 13, COLOR_FLOOR);
@@ -160,7 +160,7 @@ void GameAmongUs::Update_Choosing(unsigned int joystickX, unsigned int joystickY
 
   if (joystickPressed && joystickHeldTime <= 100) 
   {
-    playAudio(AUDIO_FOLDER_GAME_AMONGUS, AUDIO_GAME_AMONGUS_REVEAL);
+    playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_REVEAL);
     gameState = REVEAL;
   }
 }
@@ -179,7 +179,7 @@ void GameAmongUs::Update_Reveal(unsigned int joystickX, unsigned int joystickY, 
   {
     drawAlphaBitmap(13 + correctCup * 50, 42, BITMAP_GAME_AMONGUS_AMONGUS, 34, 44);
 
-    playAudio(AUDIO_FOLDER_GAME_AMONGUS, AUDIO_GAME_AMONGUS_CORRECT);
+    playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_CORRECT);
 
     delay(2000);
 
@@ -187,7 +187,7 @@ void GameAmongUs::Update_Reveal(unsigned int joystickX, unsigned int joystickY, 
   }
   else 
   { 
-    playAudio(AUDIO_FOLDER_GAME_AMONGUS, AUDIO_GAME_AMONGUS_INCORRECT);
+    playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_INCORRECT);
 
     delay(2000);
     
@@ -197,7 +197,7 @@ void GameAmongUs::Update_Reveal(unsigned int joystickX, unsigned int joystickY, 
 
     drawAlphaBitmap(13 + correctCup * 50, 42, BITMAP_GAME_AMONGUS_AMONGUS, 34, 44);
 
-    playAudio(AUDIO_FOLDER_GAME_AMONGUS, AUDIO_GAME_AMONGUS_GAMEOVER);
+    playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_GAMEOVER);
 
     delay(5000);
 

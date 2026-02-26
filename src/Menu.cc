@@ -17,6 +17,8 @@ void StartMenu(Game** games, unsigned char* selectedGame, const int numGames)
   tft.fillTriangle(29, 38, 34, 43, 24, 43, ST77XX_BLUE);
   tft.fillTriangle(24, 83, 34, 83, 29, 88, ST77XX_BLUE);
 
+  playAudio(AUDIO_MENU_FOLDER, AUDIO_MENU_START);
+
   ChangeMenuDisplay(0, games, numGames);
 }
 
@@ -32,7 +34,7 @@ int UpdateMenu(const unsigned int joystickY, const unsigned long elapsed, unsign
     if (joystickSelectedHeldTime >= JOYSTICK_SELECT_HOLD_TIME) {
       joystickSelectedHeldTime = 0;
       *selectedGame = (*selectedGame + 1) % numGames;
-      playAudio(AUDIO_FOLDER_MENU, AUDIO_FOLDER_MENU_CANVI_SELECCIO);
+      playAudio(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
       ChangeMenuDisplay(*selectedGame, games, numGames);
     }
   } 
@@ -42,7 +44,7 @@ int UpdateMenu(const unsigned int joystickY, const unsigned long elapsed, unsign
     if (joystickSelectedHeldTime >= JOYSTICK_SELECT_HOLD_TIME) {
       joystickSelectedHeldTime = 0;
       *selectedGame = (*selectedGame - 1 + numGames) % numGames;
-      playAudio(AUDIO_FOLDER_MENU, AUDIO_FOLDER_MENU_CANVI_SELECCIO);
+      playAudio(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
       ChangeMenuDisplay(*selectedGame, games, numGames);
     }
   }

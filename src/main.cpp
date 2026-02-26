@@ -63,7 +63,7 @@ void welcome()
     drawWrappedText("No s'ha pogut inicialitzar l'audio.", 16, 100, 128, 100, 1, ST7735_RED);
 
   drawWrappedText("Benvingut, Gerard!", 20, 44, 128, 100, 2, ST7735_WHITE);
-  playAudioRandomFolder(AUDIO_FOLDER_BENVINGUT, AUDIO_FOLDER_BENVINGUT_NUM);
+  playAudioRandomFolder(AUDIO_WELCOME_FOLDER, AUDIO_WELCOME_AUDIONUM);
 
   delay(3000);
 
@@ -104,10 +104,7 @@ void loop()
   {
     case MENU:
     {
-      if (!(joystickPressed && prevJoystickPressed == false)) 
-      {
-        UpdateMenu(joystickY, elapsed, &selectedGame, games, NUM_GAMES);
-      }
+      if (!(joystickPressed && prevJoystickPressed == false)) UpdateMenu(joystickY, elapsed, &selectedGame, games, NUM_GAMES);
       break;
     }
     case GAME:

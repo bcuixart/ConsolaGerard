@@ -6,7 +6,7 @@
 
 float joystickSelectedHeldTime = 0;
 
-void StartMenu(Game** games, const int numGames)
+void StartMenu(Game** games, unsigned char* selectedGame, const int numGames)
 {
   tft.fillScreen(ST77XX_WHITE);
 

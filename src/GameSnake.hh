@@ -9,7 +9,7 @@ class GameSnake : public Game
     GameSnake();
 
     virtual void Start();
-    virtual int Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long elapsed);
+    virtual int Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
 
     virtual const char* getNom() const;
     virtual const char* getDesc() const;

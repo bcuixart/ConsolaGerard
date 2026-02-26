@@ -6,7 +6,7 @@
 #include "Audio.hh"
 #include "Game.hh"
 
-void StartMenu(Game** games, const int numGames);
+void StartMenu(Game** games, unsigned char* selectedGame,  const int numGames);
 
 int UpdateMenu(const unsigned int joystickY, const unsigned long elapsed, unsigned char* selectedGame, Game** games, const int numGames);
 

@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "GameAmongUs.hh"
 #include "GameSnake.hh"
 #include "Menu.hh"
@@ -7,6 +8,9 @@
 #define PIN_JOYSTICK_X A0
 #define PIN_JOYSTICK_Y A1
 #define PIN_JOYSTICK_B 4
+
+#define JOYSTICK_HOLD_TO_MENU 5000
+#define JOYSTICK_SHORT_PRESS_MAX 100
 
 enum ConsoleState {
 	MENU,
@@ -26,12 +30,11 @@ Game* games[NUM_GAMES] = {
 };
 unsigned char selectedGame = 0;
 
-unsigned long oldMillis;
+unsigned long oldMillis = 0;
 
-unsigned char audioCheckTimer = 0;
-#define AUDIO_CHECK_TIME 200
-
-unsigned long joystickResetHeldTime = 0;
+unsigned long joystickHeldTime = 0;
+unsigned long pressStartMillis = 0;
+bool prevJoystickPressed = false;
 
 void welcome(void);
 
@@ -47,7 +50,9 @@ void setup()
 
   selectedGame = 0;
 
-  joystickResetHeldTime = 0;
+  joystickHeldTime = 0;
+  
+  oldMillis = millis();
 
   welcome();
 }
@@ -62,8 +67,10 @@ void welcome()
 
   delay(3000);
 
+  oldMillis = millis();
+
   state = MENU;
-  StartMenu(games, NUM_GAMES);
+  StartMenu(games, &selectedGame, NUM_GAMES);
 }
 
 void loop() 
@@ -72,41 +79,44 @@ void loop()
   unsigned int joystickY = analogRead(PIN_JOYSTICK_Y);
   bool joystickPressed = digitalRead(PIN_JOYSTICK_B) == LOW;
 
-  joystickResetHeldTime = joystickPressed ? joystickResetHeldTime + (millis() - oldMillis) : 0;
-  if (joystickResetHeldTime >= 5000) 
+  unsigned long currentMillis = millis();
+  unsigned long elapsed = currentMillis - oldMillis;
+
+  // Start joystick press
+  if (joystickPressed && !prevJoystickPressed) pressStartMillis = currentMillis;
+
+  // End joystick press
+  if (!joystickPressed && prevJoystickPressed) 
   {
-    joystickResetHeldTime = 0;
-    state = MENU;
-    StartMenu(games, NUM_GAMES);
+    unsigned long pressDuration = currentMillis - pressStartMillis;
+    if (state == MENU && pressDuration <= JOYSTICK_SHORT_PRESS_MAX) 
+    {
+      state = GAME;
+      games[selectedGame]->Start();
+    }
   }
 
-  unsigned long elapsed = millis() - oldMillis;
+  // Hold joystick press
+  joystickHeldTime = joystickPressed ? (currentMillis - pressStartMillis) : 0;
+  if (joystickHeldTime >= JOYSTICK_HOLD_TO_MENU && state == GAME) { state = MENU; StartMenu(games, &selectedGame, NUM_GAMES);}
 
   switch(state) 
   {
-    case MENU:{
-      if (joystickPressed) 
+    case MENU:
+    {
+      if (!(joystickPressed && prevJoystickPressed == false)) 
       {
-        state = GAME;
-        games[selectedGame]->Start();
-      }
-      else
         UpdateMenu(joystickY, elapsed, &selectedGame, games, NUM_GAMES);
+      }
       break;
     }
-    case GAME:{
-      games[selectedGame]->Update(joystickX, joystickY, joystickPressed, elapsed);
+    case GAME:
+    {
+      games[selectedGame]->Update(joystickX, joystickY, joystickPressed, joystickHeldTime, elapsed);
       break;
     }
   }
 
-/*
-  audioCheckTimer += 1;
-  if (audioCheckTimer >= AUDIO_CHECK_TIME) {
-    printDetail(myDFPlayer.readType(), myDFPlayer.read());
-    audioCheckTimer = 0;
-  }
-*/
-
-  oldMillis = millis();
+  prevJoystickPressed = joystickPressed;
+  oldMillis = currentMillis;
 }

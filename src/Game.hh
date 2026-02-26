@@ -1,7 +1,7 @@
 #ifndef GAME_HH 
 #define GAME_HH
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include "Screen.hh"
 #include "Audio.hh"
 
@@ -11,7 +11,7 @@ class Game
     Game();
 
     virtual void Start();
-    virtual int Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long elapsed);
+    virtual int Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
 
     virtual const char* getNom() const;
     virtual const char* getDesc() const;

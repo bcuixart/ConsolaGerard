@@ -2,6 +2,7 @@
 #define GAMEAMONGUS_HH
 
 #include "Game.hh"
+#include "Menu.hh"
 
 #define COLOR_WALL 0x4bd0
 #define COLOR_FLOOR 0x7d15

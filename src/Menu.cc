@@ -1,12 +1,10 @@
 #include "Menu.hh"
 
-#define JOYSTICK_SELECT_BOUND_LOW 100
-#define JOYSTICK_SELECT_BOUND_HIGH 924
-#define JOYSTICK_SELECT_HOLD_TIME 200
-
-float joystickSelectedHeldTime = 0;
+unsigned long joystickSelectedHeldTime = 0;
 
 int menuThemeSelected = 0;
+
+void ChangeMenuDisplay(unsigned char selectedGame, Game** games, const int numGames);
 
 void StartMenu(Game** games, unsigned char* selectedGame, const int numGames)
 {
@@ -34,7 +32,8 @@ int UpdateMenu(const unsigned int joystickY, const unsigned long elapsed, unsign
   else if (joystickY >= JOYSTICK_SELECT_BOUND_HIGH) 
   {
     joystickSelectedHeldTime += elapsed;
-    if (joystickSelectedHeldTime >= JOYSTICK_SELECT_HOLD_TIME) {
+    if (joystickSelectedHeldTime >= JOYSTICK_SELECT_HOLD_TIME) 
+    {
       joystickSelectedHeldTime = 0;
       *selectedGame = (*selectedGame + 1) % numGames;
       playAudio(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
@@ -44,7 +43,8 @@ int UpdateMenu(const unsigned int joystickY, const unsigned long elapsed, unsign
   else
   {
     joystickSelectedHeldTime += elapsed;
-    if (joystickSelectedHeldTime >= JOYSTICK_SELECT_HOLD_TIME) {
+    if (joystickSelectedHeldTime >= JOYSTICK_SELECT_HOLD_TIME) 
+    {
       joystickSelectedHeldTime = 0;
       *selectedGame = (*selectedGame - 1 + numGames) % numGames;
       playAudio(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);

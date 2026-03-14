@@ -29,7 +29,7 @@ Game* games[NUM_GAMES] = {
   new Game(), // SPAMSPIN: Gira la palanca tants cops com puguis en 10 segons!
   new Game(), // REACTIONTIME: Apreata la palanca per disparar el teu rival!
   new Game(), // FOOTBALL: Gira la palanca per xutar pilotes i evitar que escapin!
-  new GameSettings(),
+  new GameSettings(menuThemes),
 };
 unsigned char selectedGame = 0;
 
@@ -68,7 +68,13 @@ void welcome()
   if (!initAudio())
     drawWrappedText("No s'ha pogut inicialitzar l'audio.", 16, 100, 128, 100, 1, ST7735_RED);
 
-  drawWrappedText("Benvingut, Gerard!", 20, 44, 128, 100, 2, ST7735_WHITE);
+  drawWrappedText("Hola,", 20, 44, 128, 100, 2, ST7735_WHITE);
+  char* welcomeName = new char[EEPROM_WELCOME_NAME_SIZE + 2];
+  welcomeName[EEPROM_WELCOME_NAME_SIZE] = '!';
+  welcomeName[EEPROM_WELCOME_NAME_SIZE + 1] = '\0';
+  readFromEEPROM(EEPROM_WELCOME_NAME_ADDRESS, welcomeName, EEPROM_WELCOME_NAME_SIZE);
+  drawWrappedText(welcomeName, 20, 84, 128, 100, 2, ST7735_WHITE);
+
   playAudioRandomFolder(AUDIO_WELCOME_FOLDER, AUDIO_WELCOME_AUDIONUM);
 
   delay(3000);
@@ -124,15 +130,11 @@ void loop()
   switch(state) 
   {
     case MENU:
-    {
       if (!(stableJoystickPressed && prevJoystickPressed == false)) UpdateMenu(joystickY, elapsed, &selectedGame, games, NUM_GAMES);
       break;
-    }
     case GAME:
-    {
       games[selectedGame]->Update(joystickX, joystickY, stableJoystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
-    }
   }
 
   // Reset hold time if joystick is not pressed

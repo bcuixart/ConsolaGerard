@@ -10,6 +10,9 @@ void GameAmongUs::Start()
 {
   gameState = START;
 
+  waitDuration = 0;
+  stateElapsed = 0;
+
   correctCup = 0;
   selectedCup = 0;
   hasChangedSelectedJoystick = false;
@@ -39,25 +42,36 @@ const uint16_t* GameAmongUs::getIcon() const
 
 void GameAmongUs::Update_Start(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
-  if (!joystickPressed && prevJoystickPressed && joystickHeldTime <= 100) gameState = ROUNDTITLE;
+  if (!joystickPressed && prevJoystickPressed && joystickHeldTime <= JOYSTICK_SHORT_PRESS_MAX) gameState = ROUNDTITLE;
 }
 
 void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
-  playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_ROUNDSTART);
+  if (waitDuration == 0) 
+  {
+    playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_ROUNDSTART);
 
-  tft.fillRect(5 + correctCup * 50, 37, 49, 36, COLOR_WALL);
-  tft.fillRect(5 + correctCup * 50, 73, 49, 13, COLOR_FLOOR);
-  drawAlphaBitmap(5 + correctCup * 50, 0, BITMAP_GAME_AMONGUS_CUP, 49, 49);
+    tft.fillRect(5 + correctCup * 50, 37, 49, 36, COLOR_WALL);
+    tft.fillRect(5 + correctCup * 50, 73, 49, 13, COLOR_FLOOR);
+    drawAlphaBitmap(5 + correctCup * 50, 0, BITMAP_GAME_AMONGUS_CUP, 49, 49);
 
-  drawAlphaBitmap(13 + correctCup * 50, 42, BITMAP_GAME_AMONGUS_AMONGUS, 34, 44);
+    drawAlphaBitmap(13 + correctCup * 50, 42, BITMAP_GAME_AMONGUS_AMONGUS, 34, 44);
 
-  delay(3000);
+    waitDuration = 3000;
+    stateElapsed = 0;
+    return;
+  }
 
-  tft.fillRect(5 + correctCup * 50, 0, 49, 49, COLOR_WALL);
-  drawAlphaBitmap(5 + correctCup * 50, 37, BITMAP_GAME_AMONGUS_CUP, 49, 49);
+  stateElapsed += elapsed;
+  if (stateElapsed >= waitDuration) 
+  {
+    tft.fillRect(5 + correctCup * 50, 0, 49, 49, COLOR_WALL);
+    drawAlphaBitmap(5 + correctCup * 50, 37, BITMAP_GAME_AMONGUS_CUP, 49, 49);
 
-  gameState = ROUNDMOVEMENT;
+    waitDuration = 0;
+    stateElapsed = 0;
+    gameState = ROUNDMOVEMENT;
+  }
 }
 
 void GameAmongUs::Update_RoundMovement(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
@@ -158,7 +172,7 @@ void GameAmongUs::Update_Choosing(unsigned int joystickX, unsigned int joystickY
     drawAlphaBitmap((160/4) * (selectedCup+1) - 12, 128-42, BITMAP_GAME_AMONGUS_HAND,25,42);
   }
 
-  if (!joystickPressed && prevJoystickPressed && joystickHeldTime <= 100) 
+  if (!joystickPressed && prevJoystickPressed && joystickHeldTime <= JOYSTICK_SHORT_PRESS_MAX) 
   {
     playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_REVEAL);
     gameState = REVEAL;
@@ -167,41 +181,73 @@ void GameAmongUs::Update_Choosing(unsigned int joystickX, unsigned int joystickY
 
 void GameAmongUs::Update_Reveal(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
-  tft.fillRect((160/4) * (selectedCup+1) - 12, 128-42, 25, 42, COLOR_FLOOR);
-
-  delay(4000);
-
-  tft.fillRect(5 + selectedCup * 50, 37, 49, 36, COLOR_WALL);
-  tft.fillRect(5 + selectedCup * 50, 73, 49, 13, COLOR_FLOOR);
-  drawAlphaBitmap(5 + selectedCup * 50, 0, BITMAP_GAME_AMONGUS_CUP, 49, 49);
-
-  if (selectedCup == correctCup) 
+  if (waitDuration == 0) 
   {
-    drawAlphaBitmap(13 + correctCup * 50, 42, BITMAP_GAME_AMONGUS_AMONGUS, 34, 44);
-
-    playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_CORRECT);
-
-    delay(2000);
-
-    gameState = ROUNDTITLE;
+    tft.fillRect((160/4) * (selectedCup+1) - 12, 128-42, 25, 42, COLOR_FLOOR);
+    waitDuration = 4000;
+    stateElapsed = 0;
+    return;
   }
-  else 
-  { 
-    playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_INCORRECT);
 
-    delay(2000);
-    
+  stateElapsed += elapsed;
+
+  if (stateElapsed >= waitDuration) 
+  {
+    tft.fillRect(5 + selectedCup * 50, 37, 49, 36, COLOR_WALL);
+    tft.fillRect(5 + selectedCup * 50, 73, 49, 13, COLOR_FLOOR);
+    drawAlphaBitmap(5 + selectedCup * 50, 0, BITMAP_GAME_AMONGUS_CUP, 49, 49);
+
+    stateElapsed = 0;
+    if (selectedCup == correctCup) 
+    {
+      drawAlphaBitmap(13 + correctCup * 50, 42, BITMAP_GAME_AMONGUS_AMONGUS, 34, 44);
+      playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_CORRECT);
+      waitDuration = 2000;
+      gameState = REVEAL_CORRECT;
+    } 
+    else 
+    {
+      playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_INCORRECT);
+      waitDuration = 2000;
+      gameState = REVEAL_INCORRECT;
+    }
+  }
+}
+
+void GameAmongUs::Update_RevealCorrect(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
+{
+  stateElapsed += elapsed;
+  if (stateElapsed >= waitDuration) 
+  {
+    stateElapsed = 0;
+    waitDuration = 0;
+    gameState = ROUNDTITLE;
+    return;
+  }
+}
+
+void GameAmongUs::Update_RevealIncorrect(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
+{
+  stateElapsed += elapsed;
+  if (stateElapsed >= waitDuration && waitDuration == 2000) 
+  {
+    stateElapsed = 0;
     tft.fillRect(5 + correctCup * 50, 37, 49, 36, COLOR_WALL);
     tft.fillRect(5 + correctCup * 50, 73, 49, 13, COLOR_FLOOR);
     drawAlphaBitmap(5 + correctCup * 50, 0, BITMAP_GAME_AMONGUS_CUP, 49, 49);
 
     drawAlphaBitmap(13 + correctCup * 50, 42, BITMAP_GAME_AMONGUS_AMONGUS, 34, 44);
-
     playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_GAMEOVER);
+    waitDuration = 5000;
+    return;
+  }
 
-    delay(5000);
-
+  if (stateElapsed >= waitDuration && waitDuration == 5000) 
+  {
+    stateElapsed = 0;
+    waitDuration = 0;
     Start();
+    return;
   }
 }
 
@@ -209,26 +255,27 @@ int GameAmongUs::Update(unsigned int joystickX, unsigned int joystickY, bool joy
 {
   switch(gameState) 
   {
-    case START: {
+    case START: 
       Update_Start(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
-    }
-    case ROUNDTITLE: {
+    case ROUNDTITLE: 
       Update_RoundTitle(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
-    }
-    case ROUNDMOVEMENT: {
+    case ROUNDMOVEMENT: 
       Update_RoundMovement(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
-    }
-    case CHOOSING: {
+    case CHOOSING: 
       Update_Choosing(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
-    }
-    case REVEAL: {
+    case REVEAL:
       Update_Reveal(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
-    }
+    case REVEAL_CORRECT:
+      Update_RevealCorrect(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
+      break;
+    case REVEAL_INCORRECT:
+      Update_RevealIncorrect(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
+      break;
   }
   return 0;
 }

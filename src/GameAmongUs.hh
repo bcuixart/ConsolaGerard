@@ -27,6 +27,8 @@ class GameAmongUs : public Game
     void Update_RoundMovement(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
     void Update_Choosing(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
     void Update_Reveal(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
+    void Update_RevealCorrect(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
+    void Update_RevealIncorrect(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
 
     const char* _nom = "Among Us";
     const char* _desc = "Troba el ninot  de l'Among Us   trapella que    s'ha amagat!";
@@ -36,13 +38,18 @@ class GameAmongUs : public Game
       ROUNDTITLE,
       ROUNDMOVEMENT,
       CHOOSING,
-      REVEAL
+      REVEAL,
+      REVEAL_CORRECT,
+      REVEAL_INCORRECT
     };
     GameState gameState;
 
     unsigned char correctCup = 0;
     unsigned char selectedCup = 0;
     bool hasChangedSelectedJoystick = false;
+
+    unsigned long stateElapsed = 0;
+    unsigned long waitDuration = 0;
 };
 
 #endif

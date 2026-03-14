@@ -6,6 +6,8 @@
 #include "Audio.hh"
 #include "EEPROM.hh"
 
+#define JOYSTICK_SHORT_PRESS_MAX 300
+
 class Game
 {
   public:

@@ -35,7 +35,6 @@ bool initAudio()
 #endif
 
   pinMode(AUDIO_BUSY_PIN, INPUT);
-  //Serial.begin(115200);
 
   int attempts = 5;
   bool success = false;
@@ -57,7 +56,7 @@ bool initAudio()
     Serial.println(6 - attempts);
   }
   
-  myDFPlayer.volume(30);  // 0 - 30
+  setAudioVolume(30);
 
   return success;
 }
@@ -70,9 +69,27 @@ void playAudio(int folder, int audio)
   }
 }
 
+void playAudioMaxPriority(int folder, int audio)
+{
+  myDFPlayer.playFolder(folder, audio); 
+}
+
 void playAudioRandomFolder(int folder, int folderNumAudios)
 {
   playAudio(folder, random(1, folderNumAudios + 1));
+}
+
+void setAudioVolume(int volume)
+{
+  if (volume < 0) volume = 0;
+  if (volume > 30) volume = 30;
+
+  myDFPlayer.volume(volume);
+}
+
+int getAudioVolume()
+{
+  return myDFPlayer.readVolume();
 }
 
 /*

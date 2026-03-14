@@ -37,12 +37,12 @@ const uint16_t* GameAmongUs::getIcon() const
   return BITMAP_GAME_ICON_AMONGUS;
 }
 
-void GameAmongUs::Update_Start(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
+void GameAmongUs::Update_Start(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
-  if (joystickPressed && joystickHeldTime <= 100) gameState = ROUNDTITLE;
+  if (!joystickPressed && prevJoystickPressed && joystickHeldTime <= 100) gameState = ROUNDTITLE;
 }
 
-void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
+void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
   playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_ROUNDSTART);
 
@@ -60,7 +60,7 @@ void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystic
   gameState = ROUNDMOVEMENT;
 }
 
-void GameAmongUs::Update_RoundMovement(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
+void GameAmongUs::Update_RoundMovement(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
   int numMovements = 5;
   int delayTime = 1;
@@ -134,7 +134,7 @@ void GameAmongUs::Update_RoundMovement(unsigned int joystickX, unsigned int joys
   gameState = CHOOSING;
 }
 
-void GameAmongUs::Update_Choosing(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
+void GameAmongUs::Update_Choosing(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
   char selectedOld = selectedCup;
   if (joystickX < JOYSTICK_SELECT_BOUND_HIGH && joystickX > JOYSTICK_SELECT_BOUND_LOW) 
@@ -158,14 +158,14 @@ void GameAmongUs::Update_Choosing(unsigned int joystickX, unsigned int joystickY
     drawAlphaBitmap((160/4) * (selectedCup+1) - 12, 128-42, BITMAP_GAME_AMONGUS_HAND,25,42);
   }
 
-  if (joystickPressed && joystickHeldTime <= 100) 
+  if (!joystickPressed && prevJoystickPressed && joystickHeldTime <= 100) 
   {
     playAudio(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_REVEAL);
     gameState = REVEAL;
   }
 }
 
-void GameAmongUs::Update_Reveal(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
+void GameAmongUs::Update_Reveal(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
   tft.fillRect((160/4) * (selectedCup+1) - 12, 128-42, 25, 42, COLOR_FLOOR);
 
@@ -205,28 +205,28 @@ void GameAmongUs::Update_Reveal(unsigned int joystickX, unsigned int joystickY, 
   }
 }
 
-int GameAmongUs::Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
+int GameAmongUs::Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
   switch(gameState) 
   {
     case START: {
-      Update_Start(joystickX, joystickY, joystickPressed, joystickHeldTime, elapsed);
+      Update_Start(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
     }
     case ROUNDTITLE: {
-      Update_RoundTitle(joystickX, joystickY, joystickPressed, joystickHeldTime, elapsed);
+      Update_RoundTitle(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
     }
     case ROUNDMOVEMENT: {
-      Update_RoundMovement(joystickX, joystickY, joystickPressed, joystickHeldTime, elapsed);
+      Update_RoundMovement(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
     }
     case CHOOSING: {
-      Update_Choosing(joystickX, joystickY, joystickPressed, joystickHeldTime, elapsed);
+      Update_Choosing(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
     }
     case REVEAL: {
-      Update_Reveal(joystickX, joystickY, joystickPressed,joystickHeldTime, elapsed);
+      Update_Reveal(joystickX, joystickY, joystickPressed, prevJoystickPressed, joystickHeldTime, elapsed);
       break;
     }
   }

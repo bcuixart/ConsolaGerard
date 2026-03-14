@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "Screen.hh"
 #include "Audio.hh"
+#include "EEPROM.hh"
 
 class Game
 {
@@ -11,7 +12,7 @@ class Game
     Game();
 
     virtual void Start();
-    virtual int Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
+    virtual int Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
 
     virtual const char* getNom() const;
     virtual const char* getDesc() const;

@@ -26,6 +26,11 @@ bool initAudio(void);
 
 void playAudio(int folder, int audio);
 
+void playAudioMaxPriority(int folder, int audio);
+
 void playAudioRandomFolder(int folder, int folderNumAudios);
+
+void setAudioVolume(int volume);
+int getAudioVolume();
 
 #endif

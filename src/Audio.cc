@@ -1,5 +1,14 @@
 #include "Audio.hh"
 
+/* FORMAT EXPORTAR AUDIO
+FORMAT: MP3
+SAMPLE RATE: 44100 Hz
+BIT RATE MODE: CONSTANT
+QUALITY: 192 KBPS
+NO TRIM BLANK SPACE BEFORE FIRST CLIP
+*/
+
+
 /* CONNEXIO
 (ESQUERRA TARGETA MIRANT ABAIX)
 VCC -> 5V
@@ -15,6 +24,8 @@ SPEAKER VERMELL
 BUSY -> ARDUINO 7
 
 */
+
+bool audioInitializedCorrectly = false;
 
 #if (defined(ARDUINO_AVR_UNO) || defined(ESP8266))   // Using a soft serial port
 #include <SoftwareSerial.h>
@@ -37,18 +48,18 @@ bool initAudio()
   pinMode(AUDIO_BUSY_PIN, INPUT);
 
   int attempts = 5;
-  bool success = false;
+  audioInitializedCorrectly = false;
   while (attempts > 0)
   {
     if (myDFPlayer.begin(FPSerial, /*isACK = */true, /*doReset = */true)) {
-      success = true;
+      audioInitializedCorrectly = true;
       break;
     }
     --attempts;
     delay(100);
   }  
 
-  if (!success) { 
+  if (!audioInitializedCorrectly) { 
     Serial.println(F("Unable to begin audio."));
   }
   else {
@@ -58,19 +69,20 @@ bool initAudio()
   
   setAudioVolume(30);
 
-  return success;
+  return audioInitializedCorrectly;
 }
 
 void playAudio(int folder, int audio)
 {
-  if (digitalRead(AUDIO_BUSY_PIN)) 
-  {
-    myDFPlayer.playFolder(folder, audio);
-  }
+  if (!audioInitializedCorrectly) return;
+
+  if (digitalRead(AUDIO_BUSY_PIN)) myDFPlayer.playFolder(folder, audio);
 }
 
 void playAudioMaxPriority(int folder, int audio)
 {
+  if (!audioInitializedCorrectly) return;
+
   myDFPlayer.playFolder(folder, audio); 
 }
 
@@ -81,6 +93,8 @@ void playAudioRandomFolder(int folder, int folderNumAudios)
 
 void setAudioVolume(int volume)
 {
+  if (!audioInitializedCorrectly) return;
+  
   if (volume < 0) volume = 0;
   if (volume > 30) volume = 30;
 
@@ -89,6 +103,8 @@ void setAudioVolume(int volume)
 
 int getAudioVolume()
 {
+  if (!audioInitializedCorrectly) return 0;
+  
   return myDFPlayer.readVolume();
 }
 

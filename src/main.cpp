@@ -10,7 +10,7 @@
 #define PIN_JOYSTICK_Y A1
 #define PIN_JOYSTICK_B 4
 
-#define JOYSTICK_HOLD_TO_MENU 5000
+#define JOYSTICK_HOLD_TO_MENU 3000
 #define JOYSTICK_SHORT_PRESS_MAX 300
 #define JOYSTICK_DEBOUNCE_MS 20
 
@@ -86,7 +86,7 @@ void welcome()
 }
 
 void loop() 
-{
+{  
   unsigned int joystickX = analogRead(PIN_JOYSTICK_X);
   unsigned int joystickY = analogRead(PIN_JOYSTICK_Y);
   bool joystickPressedRaw = digitalRead(PIN_JOYSTICK_B) == LOW;

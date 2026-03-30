@@ -49,7 +49,7 @@ int GameSettings::Update_SettingSelection(unsigned int joystickX, unsigned int j
     {
       _joystickSelectedHeldTime = 0;
       _settingSelected = (_settingSelected + 1) % 3;
-      playAudio(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
+      playAudioMaxPriority(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
       DrawScreenSettingSelection();
     }
   } 
@@ -60,7 +60,7 @@ int GameSettings::Update_SettingSelection(unsigned int joystickX, unsigned int j
     {
       _joystickSelectedHeldTime = 0;
       _settingSelected = (_settingSelected - 1 + 3) % 3;
-      playAudio(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
+      playAudioMaxPriority(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
       DrawScreenSettingSelection();
     }
   }    

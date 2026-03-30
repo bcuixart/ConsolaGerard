@@ -36,7 +36,7 @@ int UpdateMenu(const unsigned int joystickY, const unsigned long elapsed, unsign
     {
       joystickSelectedHeldTime = 0;
       *selectedGame = (*selectedGame + 1) % numGames;
-      playAudio(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
+      playAudioMaxPriority(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
       ChangeMenuDisplay(*selectedGame, games, numGames);
     }
   } 
@@ -47,7 +47,7 @@ int UpdateMenu(const unsigned int joystickY, const unsigned long elapsed, unsign
     {
       joystickSelectedHeldTime = 0;
       *selectedGame = (*selectedGame - 1 + numGames) % numGames;
-      playAudio(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
+      playAudioMaxPriority(AUDIO_MENU_FOLDER, AUDIO_MENU_CHANGE_SELECTION);
       ChangeMenuDisplay(*selectedGame, games, numGames);
     }
   }

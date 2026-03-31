@@ -4,6 +4,8 @@
 #include "Game.hh"
 #include "Menu.hh"
 
+#define WELCOME_NAME_CHARACTER_LIST_LENGTH 64
+
 class GameSettings : public Game
 {
   public:
@@ -27,6 +29,10 @@ class GameSettings : public Game
     void DrawScreenName() const;
     void DrawScreenTheme() const;
 
+    char GetNextWelcomeNameCharacter(char currentChar, bool increment);
+
+    const char _welcomeNameCharacterList[WELCOME_NAME_CHARACTER_LIST_LENGTH] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 0123456789";
+
     const char* _nom = "Ajustar";
     const char* _desc = "Canvia la       configuracio    de la consola.";
 
@@ -43,6 +49,8 @@ class GameSettings : public Game
     unsigned char _currentMenuTheme;
 
     unsigned char _settingSelected = 0;
+
+    unsigned char _currentWelcomeNameCharacter = 0;
 
     unsigned long _joystickSelectedHeldTime = 0;
 

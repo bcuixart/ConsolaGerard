@@ -68,12 +68,16 @@ void welcome()
   if (!initAudio())
     drawWrappedText("No s'ha pogut inicialitzar l'audio.", 16, 100, 128, 100, 1, ST7735_RED);
 
-  drawWrappedText("Hola,", 20, 44, 128, 100, 2, ST7735_WHITE);
+  drawWrappedText("Hola,", 50, 44, 128, 100, 2, ST7735_WHITE);
   char* welcomeName = new char[EEPROM_WELCOME_NAME_SIZE + 2];
   welcomeName[EEPROM_WELCOME_NAME_SIZE] = '!';
   welcomeName[EEPROM_WELCOME_NAME_SIZE + 1] = '\0';
   readFromEEPROM(EEPROM_WELCOME_NAME_ADDRESS, welcomeName, EEPROM_WELCOME_NAME_SIZE);
-  drawWrappedText(welcomeName, 20, 84, 128, 100, 2, ST7735_WHITE);
+  drawWrappedText(welcomeName, 40, 74, 128, 100, 2, ST7735_WHITE);
+
+  int _currentVolume = 0;
+  readFromEEPROM(EEPROM_VOLUME_ADDRESS, &_currentVolume, 1);
+  setAudioVolume(_currentVolume);
 
   playAudioRandomFolder(AUDIO_WELCOME_FOLDER, AUDIO_WELCOME_AUDIONUM);
 

@@ -51,6 +51,14 @@ class GameAmongUs : public Game
 
     unsigned long stateElapsed = 0;
     unsigned long waitDuration = 0;
+
+    unsigned int round;
+
+    unsigned int roundNumMovements = 0;
+    unsigned char roundMovement = 0;
+    float roundMovementDuration = 0;
+    float roundTotalDuration = 0;
+    bool roundReachedHalfway = false;
 };
 
 #endif

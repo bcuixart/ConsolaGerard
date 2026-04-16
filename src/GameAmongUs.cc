@@ -13,6 +13,8 @@ void GameAmongUs::Start()
   waitDuration = 0;
   stateElapsed = 0;
 
+  round = 1;
+
   correctCup = 0;
   selectedCup = 0;
   hasChangedSelectedJoystick = false;
@@ -70,20 +72,23 @@ void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystic
 
     waitDuration = 0;
     stateElapsed = 0;
+
+    roundNumMovements = 3 + (round - 1);
+    roundMovement = random(0, 2);
+    roundMovementDuration = (1.0f - (round - 1) * 0.1f) * 1000;
+    roundMovementDuration = max(roundMovementDuration, 100);
+    roundTotalDuration = roundMovementDuration * roundNumMovements;
+    roundReachedHalfway = false;
+
     gameState = ROUNDMOVEMENT;
   }
 }
 
 void GameAmongUs::Update_RoundMovement(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
 {
-  int numMovements = 5;
-  int delayTime = 1;
-  for (int m = 0; m < numMovements; ++m) 
+  if (stateElapsed == 0)
   {
-    int movement = random(0, 2); // 0 o 1
-
-    // Canvien de lloc la del mig i l'esquerra
-    if (movement == 0)
+    if (roundMovement == 0) // Canvien de lloc la del mig i l'esquerra
     {
       if (correctCup == 0) correctCup = 1;
       else if (correctCup == 1) correctCup = 0;
@@ -91,28 +96,10 @@ void GameAmongUs::Update_RoundMovement(unsigned int joystickX, unsigned int joys
       tft.fillRect(5, 37, 55 + 49 - 5, 36, COLOR_WALL);
       tft.fillRect(5, 73, 55 + 49 - 5, 13, COLOR_FLOOR);
       drawAlphaBitmap(25,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-      tft.fillRect(25, 37, 49, 36, COLOR_WALL);
-      tft.fillRect(25, 73, 49, 13, COLOR_FLOOR);
-      drawAlphaBitmap(5,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-      drawAlphaBitmap(55,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-
-      /*
-      for (int s = 0; s <= 50; s += 25) 
-      {
-        int cupPosXLeft = 5 + s;
-        int cupPosXRight = 55 - s;
-
-        tft.fillRect(5, 37, 55 + 49 - 5, 36, COLOR_WALL);
-        tft.fillRect(5, 73, 55 + 49 - 5, 13, COLOR_FLOOR);
-        drawAlphaBitmap(cupPosXLeft,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-        //drawAlphaBitmap(cupPosXRight,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-
-        //delay(delayTime);
-      }
-      */
+      //tft.drawFastHLine(15, 50, 89, ST77XX_BLUE);
+      //tft.drawFastHLine(15, 70, 89, ST77XX_BLUE);
     }
-    // Canvien de lloc la del mig i la dreta
-    else 
+    else // Canvien de lloc la del mig i la dreta
     {
       if (correctCup == 2) correctCup = 1;
       else if (correctCup == 1) correctCup = 2;
@@ -120,32 +107,49 @@ void GameAmongUs::Update_RoundMovement(unsigned int joystickX, unsigned int joys
       tft.fillRect(55, 37, 55 + 49 - 5, 36, COLOR_WALL);
       tft.fillRect(55, 73, 55 + 49 - 5, 13, COLOR_FLOOR);
       drawAlphaBitmap(75,37,BITMAP_GAME_AMONGUS_CUP,49,49);
+      //tft.drawFastHLine(55, 50, 89, ST77XX_BLUE);
+      //tft.drawFastHLine(55, 70, 89, ST77XX_BLUE);
+    }
+  }
+
+  stateElapsed += elapsed;
+
+  if (stateElapsed >= roundMovementDuration / 2 && !roundReachedHalfway) 
+  {
+    roundReachedHalfway = true;
+    if (roundMovement == 0) // Canvien de lloc la del mig i l'esquerra
+    {
+      tft.fillRect(25, 37, 49, 36, COLOR_WALL);
+      tft.fillRect(25, 73, 49, 13, COLOR_FLOOR);
+      drawAlphaBitmap(5,37,BITMAP_GAME_AMONGUS_CUP,49,49);
+      drawAlphaBitmap(55,37,BITMAP_GAME_AMONGUS_CUP,49,49);
+    }
+    else // Canvien de lloc la del mig i la dreta
+    {
       tft.fillRect(75, 37, 49, 36, COLOR_WALL);
       tft.fillRect(75, 73, 49, 13, COLOR_FLOOR);
       drawAlphaBitmap(55,37,BITMAP_GAME_AMONGUS_CUP,49,49);
       drawAlphaBitmap(105,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-
-      /*
-      for (int s = 0; s <= 50; s += 25) 
-      {
-        int cupPosXLeft = 55 + s;
-        int cupPosXRight = 105 - s;
-
-        tft.fillRect(55, 37, 105 + 49 - 55, 36, COLOR_WALL);
-        tft.fillRect(55, 73, 105 + 49 - 55, 13, COLOR_FLOOR);
-        drawAlphaBitmap(cupPosXLeft,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-        //drawAlphaBitmap(cupPosXRight,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-
-        //delay(delayTime);
-      }
-      */
     }
   }
-  
-  selectedCup = 0;
-  drawAlphaBitmap((160/4) * (selectedCup+1) - 12, 128-42, BITMAP_GAME_AMONGUS_HAND,25,42);
 
-  gameState = CHOOSING;
+  if (stateElapsed >= roundMovementDuration) 
+  {
+    stateElapsed = 0;
+    roundNumMovements--;
+
+    roundReachedHalfway = false;
+    roundMovement = random(0, 2);
+
+    if (roundNumMovements <= 0) 
+    {
+      selectedCup = 0;
+      drawAlphaBitmap(18+50*selectedCup, 128-42, BITMAP_GAME_AMONGUS_HAND,25,42);
+
+      gameState = CHOOSING;
+      return;
+    }
+  }
 }
 
 void GameAmongUs::Update_Choosing(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)
@@ -168,8 +172,8 @@ void GameAmongUs::Update_Choosing(unsigned int joystickX, unsigned int joystickY
 
   if (selectedOld != selectedCup) 
   {
-    tft.fillRect((160/4) * (selectedOld+1) - 12, 128-42, 25, 42, COLOR_FLOOR);
-    drawAlphaBitmap((160/4) * (selectedCup+1) - 12, 128-42, BITMAP_GAME_AMONGUS_HAND,25,42);
+    tft.fillRect(18+50*selectedOld, 128-42, 25, 42, COLOR_FLOOR);
+    drawAlphaBitmap(18+50*selectedCup, 128-42, BITMAP_GAME_AMONGUS_HAND,25,42);
   }
 
   if (!joystickPressed && prevJoystickPressed && joystickHeldTime <= JOYSTICK_SHORT_PRESS_MAX) 
@@ -183,7 +187,7 @@ void GameAmongUs::Update_Reveal(unsigned int joystickX, unsigned int joystickY, 
 {
   if (waitDuration == 0) 
   {
-    tft.fillRect((160/4) * (selectedCup+1) - 12, 128-42, 25, 42, COLOR_FLOOR);
+    tft.fillRect(18+50*selectedCup, 128-42, 25, 42, COLOR_FLOOR);
     waitDuration = 4000;
     stateElapsed = 0;
     return;
@@ -222,6 +226,8 @@ void GameAmongUs::Update_RevealCorrect(unsigned int joystickX, unsigned int joys
     stateElapsed = 0;
     waitDuration = 0;
     gameState = ROUNDTITLE;
+
+    ++round;
     return;
   }
 }

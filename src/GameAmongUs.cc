@@ -19,6 +19,8 @@ void GameAmongUs::Start()
   selectedCup = 0;
   hasChangedSelectedJoystick = false;
   
+  amongUsTwerkPosition = -45;
+
   tft.fillRect(0, 0, 160, 73, COLOR_WALL);
   tft.fillRect(0, 73, 160, 55, COLOR_FLOOR);
 
@@ -59,6 +61,9 @@ void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystic
 
     drawAlphaBitmap(13 + correctCup * 50, 42, BITMAP_GAME_AMONGUS_AMONGUS, 34, 44);
 
+    tft.fillRect(0, 89, 160, 39, COLOR_FLOOR);
+    drawWrappedText(("Ronda " + String(round)).c_str(), 10, 100, 140, 20, 2, COLOR_WALL);
+
     waitDuration = 3000;
     stateElapsed = 0;
     return;
@@ -70,6 +75,8 @@ void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystic
     tft.fillRect(5 + correctCup * 50, 0, 49, 49, COLOR_WALL);
     drawAlphaBitmap(5 + correctCup * 50, 37, BITMAP_GAME_AMONGUS_CUP, 49, 49);
 
+    tft.fillRect(0, 89, 160, 39, COLOR_FLOOR);
+
     waitDuration = 0;
     stateElapsed = 0;
 
@@ -78,8 +85,14 @@ void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystic
     roundMovementDuration = (1.0f - (round - 1) * 0.1f) * 1000;
     roundMovementDuration = max(roundMovementDuration, 100);
     roundTotalDuration = roundMovementDuration * roundNumMovements;
+    roundTotalElapsed = 0;
+    amongUsTwerkFrame = 0;
     roundReachedHalfway = false;
 
+    thisRoundHasTwerk = round >= 5 && random(0, 2) == 0;
+    amongUsTwerkPosition = -45;
+
+    if (thisRoundHasTwerk) playAudioMaxPriority(AUDIO_GAME_AMONGUS_FOLDER, AUDIO_GAME_AMONGUS_TWERK);
     gameState = ROUNDMOVEMENT;
   }
 }
@@ -113,6 +126,14 @@ void GameAmongUs::Update_RoundMovement(unsigned int joystickX, unsigned int joys
   }
 
   stateElapsed += elapsed;
+  roundTotalElapsed += elapsed;
+
+  if (thisRoundHasTwerk)
+  {
+    amongUsTwerkFrame += 0.2f;
+    amongUsTwerkPosition = -45.0f + ((float)roundTotalElapsed / roundTotalDuration) * (173.0f - -45.0f);
+    DrawAmongusTwerk();
+  }
 
   if (stateElapsed >= roundMovementDuration / 2 && !roundReachedHalfway) 
   {
@@ -145,6 +166,8 @@ void GameAmongUs::Update_RoundMovement(unsigned int joystickX, unsigned int joys
     {
       selectedCup = 0;
       drawAlphaBitmap(18+50*selectedCup, 128-42, BITMAP_GAME_AMONGUS_HAND,25,42);
+
+      stopAudio();
 
       gameState = CHOOSING;
       return;
@@ -254,6 +277,16 @@ void GameAmongUs::Update_RevealIncorrect(unsigned int joystickX, unsigned int jo
     waitDuration = 0;
     Start();
     return;
+  }
+}
+
+void GameAmongUs::DrawAmongusTwerk()
+{
+  if ((int)amongUsTwerkLastDrawnPosition != (int)amongUsTwerkPosition)
+  {
+    tft.fillRect((int)amongUsTwerkLastDrawnPosition, 89, (int)amongUsTwerkPosition - (int)amongUsTwerkLastDrawnPosition, 43, COLOR_FLOOR);
+    tft.drawRGBBitmap((int)amongUsTwerkPosition, 89, int(amongUsTwerkFrame) % 2 == 0 ? BITMAP_GAME_AMONGUS_TWERK_001 : BITMAP_GAME_AMONGUS_TWERK_002, 43, 43);
+    amongUsTwerkLastDrawnPosition = amongUsTwerkPosition;
   }
 }
 

@@ -2,6 +2,7 @@
 #define GAME_HH
 
 #include <Arduino.h>
+#include <cmath>
 #include "Screen.hh"
 #include "Audio.hh"
 #include "EEPROM.hh"

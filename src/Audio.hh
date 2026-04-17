@@ -17,6 +17,7 @@
 #define AUDIO_GAME_AMONGUS_INCORRECT 2
 #define AUDIO_GAME_AMONGUS_CORRECT 3
 #define AUDIO_GAME_AMONGUS_GAMEOVER 5
+#define AUDIO_GAME_AMONGUS_TWERK 6
 
 extern DFRobotDFPlayerMini myDFPlayer;
 
@@ -29,6 +30,8 @@ void playAudio(int folder, int audio);
 void playAudioMaxPriority(int folder, int audio);
 
 void playAudioRandomFolder(int folder, int folderNumAudios);
+
+void stopAudio(void);
 
 void setAudioVolume(int volume);
 int getAudioVolume();

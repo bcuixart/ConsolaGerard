@@ -91,6 +91,13 @@ void playAudioRandomFolder(int folder, int folderNumAudios)
   playAudio(folder, random(1, folderNumAudios + 1));
 }
 
+void stopAudio(void)
+{
+  if (!audioInitializedCorrectly) return;
+
+  myDFPlayer.stop();
+}
+
 void setAudioVolume(int volume)
 {
   if (!audioInitializedCorrectly) return;

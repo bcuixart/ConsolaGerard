@@ -31,6 +31,8 @@ class GameAmongUs : public Game
     void Update_RevealCorrect(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
     void Update_RevealIncorrect(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
 
+    void DrawAmongusTwerk();
+
     const char* _nom = "Among Us";
     const char* _desc = "Troba el ninot  de l'Among Us   trapella que    s'ha amagat!";
 
@@ -58,7 +60,14 @@ class GameAmongUs : public Game
     unsigned char roundMovement = 0;
     float roundMovementDuration = 0;
     float roundTotalDuration = 0;
+    float roundTotalElapsed = 0;
     bool roundReachedHalfway = false;
+
+    float amongUsTwerkPosition = 0;
+    float amongUsTwerkLastDrawnPosition = 0;
+    float amongUsTwerkFrame = 0;
+
+    bool thisRoundHasTwerk = false;
 };
 
 #endif

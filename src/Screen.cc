@@ -44,7 +44,8 @@ void drawWrappedText(const char* text, int16_t x, int16_t y, int16_t w, int16_t 
     {
         int16_t tx, ty;
         uint16_t tw, th;
-        tft.getTextBounds(String(*text), cursorX, cursorY, &tx, &ty, &tw, &th);
+        char charBuf[2] = {*text, '\0'};
+        tft.getTextBounds(charBuf, cursorX, cursorY, &tx, &ty, &tw, &th);
 
         if (cursorX + tw > x + w) {
             cursorX = x;

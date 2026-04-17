@@ -1,9 +1,15 @@
-#include "api/Common.h"
 #include "GameAmongUs.hh"
 
 GameAmongUs::GameAmongUs()
 {
 
+}
+
+void GameAmongUs::DrawCupAtPosition(int x)
+{
+  tft.fillRect(x, 37, 49, 36, COLOR_WALL);
+  tft.fillRect(x, 73, 49, 13, COLOR_FLOOR);
+  drawAlphaBitmap(x, 37, BITMAP_GAME_AMONGUS_CUP, 49, 49);
 }
 
 void GameAmongUs::Start()
@@ -24,9 +30,9 @@ void GameAmongUs::Start()
   tft.fillRect(0, 0, 160, 73, COLOR_WALL);
   tft.fillRect(0, 73, 160, 55, COLOR_FLOOR);
 
-  drawAlphaBitmap(5,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-  drawAlphaBitmap(55,37,BITMAP_GAME_AMONGUS_CUP,49,49);
-  drawAlphaBitmap(105,37,BITMAP_GAME_AMONGUS_CUP,49,49);
+  DrawCupAtPosition(5);
+  DrawCupAtPosition(55);
+  DrawCupAtPosition(105);
 }
 
 const char* GameAmongUs::getNom() const
@@ -62,7 +68,9 @@ void GameAmongUs::Update_RoundTitle(unsigned int joystickX, unsigned int joystic
     drawAlphaBitmap(13 + correctCup * 50, 42, BITMAP_GAME_AMONGUS_AMONGUS, 34, 44);
 
     tft.fillRect(0, 89, 160, 39, COLOR_FLOOR);
-    drawWrappedText(("Ronda " + String(round)).c_str(), 10, 100, 140, 20, 2, COLOR_WALL);
+    char roundText[16];
+    sprintf(roundText, "Ronda %d", round);
+    drawWrappedText(roundText, 10, 100, 140, 20, 2, COLOR_WALL);
 
     waitDuration = 3000;
     stateElapsed = 0;

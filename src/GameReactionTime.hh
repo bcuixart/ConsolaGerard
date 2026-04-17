@@ -1,15 +1,15 @@
-#ifndef GAME_HH 
-#define GAME_HH
+#ifndef GAMEREACTIONTIME_HH 
+#define GAMEREACTIONTIME_HH
 
-#include <Arduino.h>
-#include "Screen.hh"
-#include "Audio.hh"
-#include "EEPROM.hh"
+#include "Game.hh"
 
-class Game
+#define JOYSTICK_SELECT_BOUND_LOW 100
+#define JOYSTICK_SELECT_BOUND_HIGH 924
+
+class GameReactionTime : public Game
 {
   public:
-    Game();
+    GameReactionTime();
 
     virtual void Start();
     virtual int Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
@@ -19,8 +19,8 @@ class Game
     virtual const uint16_t* getIcon() const;
 
   private:
-    const char* _nom = "JOC";
-    const char* _desc = "DESCRIPCIO";
+    const char* _nom = "Vaquers";
+    const char* _desc = "Dispara el teu  rival abans que ell et dispari atu!";
 };
 
 #endif

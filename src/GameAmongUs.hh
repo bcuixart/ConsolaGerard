@@ -31,6 +31,7 @@ class GameAmongUs : public Game
     void Update_RevealCorrect(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
     void Update_RevealIncorrect(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);
 
+    void DrawCupAtPosition(int x);
     void DrawAmongusTwerk();
 
     const char* _nom = "Among Us";

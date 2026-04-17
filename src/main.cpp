@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "GameAmongUs.hh"
+#include "GameReactionTime.hh"
 #include "GameSnake.hh"
 #include "GameSettings.hh"
 #include "Menu.hh"
@@ -23,11 +24,11 @@ ConsoleState state;
 #define NUM_GAMES 8
 Game* games[NUM_GAMES] = {
   new GameAmongUs(),
+  new GameReactionTime(),
   new GameSnake(),
   new Game(), // ARROW: Bloqueja fletxes girant el teu escut amb la palanca! Bloquejar fletxes a lo old man
   new Game(), // SPAMCLICK: Apreta la palanca tants cops com puguis en 10 segons!
   new Game(), // SPAMSPIN: Gira la palanca tants cops com puguis en 10 segons!
-  new Game(), // REACTIONTIME: Apreata la palanca per disparar el teu rival!
   new Game(), // FOOTBALL: Gira la palanca per xutar pilotes i evitar que escapin!
   new GameSettings(menuThemes),
 };

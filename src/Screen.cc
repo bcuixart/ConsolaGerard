@@ -73,3 +73,25 @@ void drawAlphaBitmap(int x, int y, const uint16_t* bitmap, int w, int h)
         }
     } 
 }
+
+void drawPaletteBitmap(int x, int y, const PalettedBitmap& bitmap)
+{
+    uint16_t* bitmap_to_draw = (uint16_t*)malloc(bitmap.width * bitmap.height * sizeof(uint16_t));
+    uint16_t *bitmap_pointer = bitmap_to_draw;
+
+    uint16_t data_size = bitmap.data_size;
+    for (int i = 0; i < data_size; ++i) 
+    {
+        uint8_t byte = bitmap.data[i];
+        uint8_t palette_index = byte >> 4;
+        uint8_t pixel_count = byte & 0x0F;
+
+        for (int j = 0; j < pixel_count + 1; ++j) 
+        {
+            *bitmap_pointer++ = bitmap.palette[palette_index];
+        }
+    }
+
+    tft.drawRGBBitmap(x, y, bitmap_to_draw, bitmap.width, bitmap.height);
+    if (bitmap_to_draw) free(bitmap_to_draw);
+}

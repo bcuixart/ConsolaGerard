@@ -20,7 +20,7 @@ class GameAmongUs : public Game
 
     virtual const char* getNom() const;
     virtual const char* getDesc() const;
-    virtual const uint16_t* getIcon() const;
+    virtual const PalettedBitmap* getIcon() const;
 
   private:
     void Update_Start(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, bool prevJoystickPressed, unsigned long joystickHeldTime, unsigned long elapsed);

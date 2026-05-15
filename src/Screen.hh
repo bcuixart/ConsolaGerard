@@ -22,4 +22,6 @@ void drawWrappedText(const char* text, int16_t x, int16_t y, int16_t w, int16_t 
 
 void drawAlphaBitmap(int x, int y, const uint16_t* bitmap, int w, int h);
 
+void drawPaletteBitmap(int x, int y, const PalettedBitmap& bitmap);
+
 #endif

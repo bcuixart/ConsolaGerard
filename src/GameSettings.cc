@@ -15,9 +15,9 @@ const char* GameSettings::getDesc() const
   return _desc;
 }
 
-const uint16_t* GameSettings::getIcon() const
+const PalettedBitmap* GameSettings::getIcon() const
 {
-  return BITMAP_GAME_ICON_SETTINGS;
+  return &BITMAP_GAME_ICON_SETTINGS;
 }
 
 void GameSettings::Start()

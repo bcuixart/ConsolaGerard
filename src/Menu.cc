@@ -64,7 +64,7 @@ void ChangeMenuDisplay(unsigned char selectedGame, Game** games, const int numGa
   
   char prevGame = (selectedGame - 1 + numGames) % numGames;
   char nextGame = (selectedGame + 1) % numGames;
-  tft.drawRGBBitmap(14, 48, games[selectedGame]->getIcon(), 32, 32);
-  tft.drawRGBBitmap(14, 4, games[prevGame]->getIcon(), 32, 32);
-  tft.drawRGBBitmap(14, 91, games[nextGame]->getIcon(), 32, 32);
+  drawPaletteBitmap(14, 48, *games[selectedGame]->getIcon());
+  drawPaletteBitmap(14, 4, *games[prevGame]->getIcon());
+  drawPaletteBitmap(14, 91, *games[nextGame]->getIcon());
 }

@@ -20,9 +20,9 @@ const char* GameSnake::getDesc() const
   return _desc;
 }
 
-const uint16_t* GameSnake::getIcon() const
+const PalettedBitmap* GameSnake::getIcon() const
 {
-  return BITMAP_GAME_ICON_SPAMCLICK;
+  return &BITMAP_GAME_ICON_SPAMCLICK;
 }
 
 int GameSnake::Update(unsigned int joystickX, unsigned int joystickY, bool joystickPressed, unsigned long joystickHeldTime, unsigned long elapsed)

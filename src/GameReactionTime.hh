@@ -16,7 +16,7 @@ class GameReactionTime : public Game
 
     virtual const char* getNom() const;
     virtual const char* getDesc() const;
-    virtual const uint16_t* getIcon() const;
+    virtual const PalettedBitmap* getIcon() const;
 
   private:
     const char* _nom = "Vaquers";

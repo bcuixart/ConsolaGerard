@@ -74,24 +74,40 @@ void drawAlphaBitmap(int x, int y, const uint16_t* bitmap, int w, int h)
     } 
 }
 
-void drawPaletteBitmap(int x, int y, const PalettedBitmap& bitmap)
-{
-    uint16_t* bitmap_to_draw = (uint16_t*)malloc(bitmap.width * bitmap.height * sizeof(uint16_t));
-    uint16_t *bitmap_pointer = bitmap_to_draw;
+void drawPaletteBitmap(int x, int y, const PalettedBitmap& bitmap) {
+    uint8_t  w          = pgm_read_byte(&(bitmap.width));
+    uint8_t  h          = pgm_read_byte(&(bitmap.height));
+    uint16_t d_size     = pgm_read_word(&(bitmap.data_size));
+    
+    const uint8_t* data_ptr = (const uint8_t*)pgm_read_ptr(&(bitmap.data));
 
-    uint16_t data_size = bitmap.data_size;
-    for (int i = 0; i < data_size; ++i) 
-    {
-        uint8_t byte = bitmap.data[i];
-        uint8_t palette_index = byte >> 4;
-        uint8_t pixel_count = byte & 0x0F;
+    if (w == 0 || h == 0 || d_size == 0) return; 
 
-        for (int j = 0; j < pixel_count + 1; ++j) 
+    tft.startWrite();
+    tft.setAddrWindow(x, y, w, h);
+
+    uint16_t pixels_processed = 0;
+    uint16_t total_pixels = (uint16_t)w * h;
+
+    for (uint16_t i = 0; i < d_size; i++) {
+        uint8_t b = pgm_read_byte(&(data_ptr[i]));
+        
+        uint8_t idx   = b >> 4;
+        uint8_t count = (b & 0x0F) + 1;
+
+        uint16_t color = pgm_read_word(&(bitmap.palette[idx]));
+
+        for (uint8_t j = 0; j < count; j++) 
         {
-            *bitmap_pointer++ = bitmap.palette[palette_index];
+            if (pixels_processed < total_pixels) 
+            {
+                tft.pushColor(color);
+                pixels_processed++;
+            }
         }
-    }
 
-    tft.drawRGBBitmap(x, y, bitmap_to_draw, bitmap.width, bitmap.height);
-    if (bitmap_to_draw) free(bitmap_to_draw);
+        if ((i & 0x1FF) == 0) yield(); 
+    }
+    
+    tft.endWrite();
 }

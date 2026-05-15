@@ -15,14 +15,14 @@ void error(const char* message)
 }
 
 /*
-// const struct Bitmap 
+typedef struct
 {
 	uint8_t width;
 	uint8_t height;
 	uint16_t palette[16];
 	uint16_t data_size;
 	uint8_t* data;
-}
+} PalettedBitmap;
 */
 
 void get_palette(unsigned char* data, int width, int height, uint16_t* palette)
@@ -81,35 +81,33 @@ void get_data(unsigned char* data, int width, int height, uint16_t* palette, uin
 
 void generate_bitmap(const char* struct_name, int width, int height, unsigned char* data)
 {
-	printf("const struct Bitmap PROGMEM %s = \n{\n", struct_name);
-	printf("\twidth = %d,\n", width);
-	printf("\theight = %d,\n", height);
-	printf("\tpalette = { ");
-
 	// Palette
 	uint16_t palette[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 	get_palette(data, width, height, palette);
-	for (int i = 0; i < 16; i++)
-	{
-		printf("0x%04X%s", palette[i], (i < 15) ? ", " : "");
-	}
-	printf("},\n");
 
 	// Data
 	uint8_t output[width * height];
 	unsigned int data_size = 0;
 	get_data(data, width, height, palette, output, &data_size);
 
-	printf("\tdata_size = %d,\n", data_size);
-	printf("\tdata = {\n");
-
-	for (unsigned int i = 0; i < data_size; i++)
-	{
+	printf("const uint8_t %s_data[] PROGMEM = {\n\t", struct_name);
+	for (unsigned int i = 0; i < data_size; i++) {
 		printf("0x%02X%s", output[i], (i < data_size - 1) ? ", " : "");
-		if ((i + 1) % 16 == 0) printf("\n");
+		if ((i + 1) % 16 == 0) printf("\n\t");
 	}
-	
-	printf("\t}\n};\n");
+	printf("\n};\n\n");
+
+	printf("const PalettedBitmap %s PROGMEM = {\n", struct_name);
+	printf("\t%d, %d, \n", width, height);
+	printf("\t{");
+	for (int i = 0; i < 16; i++) {
+		printf("0x%04X%s", palette[i], (i < 15) ? ", " : "");
+	}
+	printf("},\n");
+
+	printf("\t%d, \n", data_size);
+	printf("\t%s_data \n", struct_name);
+	printf("};\n");
 }
 
 int main(int argc, char* argv[]) 
